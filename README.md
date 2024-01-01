@@ -12,7 +12,8 @@ During the course we build a deep learning framework called "miniai" from scratc
 Clone this repo, `cd` to it, and run:
 
 ``` sh
-pip install -e .
+!git clone https://github.com/fastai/course22p2.git
+!pip install ./course22p2
 ```
 
 This installs the `miniai` library which we're creating in this course.
