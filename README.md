@@ -13,7 +13,7 @@ Clone this repo, `cd` to it, and run:
 
 ``` sh
 !git clone https://github.com/sky1ove/course22p2.git
-!pip install ./course22p2
+!pip install ./course22p2 -q
 ```
 
 This installs the `miniai` library which we're creating in this course.
