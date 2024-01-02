@@ -12,7 +12,7 @@ During the course we build a deep learning framework called "miniai" from scratc
 Clone this repo, `cd` to it, and run:
 
 ``` sh
-!git clone https://github.com/fastai/course22p2.git
+!git clone https://github.com/sky1ove/course22p2.git
 !pip install ./course22p2
 ```
 
