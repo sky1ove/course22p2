@@ -12,7 +12,7 @@ from torch.utils.data import default_collate
 from .training import *
 
 # %% auto 0
-__all__ = ['inplace', 'collate_dict', 'show_image', 'subplots', 'get_grid', 'show_images', 'DataLoaders']
+__all__ = ['inplace', 'collate_dict', 'show_image', 'subplots', 'get_grid', 'show_images', 'DataLoaders', 'from_datasets']
 
 # %% ../nbs/05_datasets.ipynb 23
 def inplace(f):
@@ -100,5 +100,12 @@ class DataLoaders:
 
     @classmethod
     def from_dd(cls, dd, batch_size, as_tuple=True, **kwargs):
-        f = collate_dict(dd['train'])
+        "Remove dict format, only keep the values"
+        f = collate_dict(dd['train']) # collate_dict remove dictionary format
         return cls(*get_dls(*dd.values(), bs=batch_size, collate_fn=f, **kwargs))
+
+# %% ../nbs/05_datasets.ipynb 52
+@fc.patch_to(DataLoaders,cls_method=True)
+def from_datasets(cls, dsets, batch_size, **kwargs):
+    "Keep the dictionary format"
+    return cls(*get_dls(*dsets.values(), bs=batch_size, **kwargs))
