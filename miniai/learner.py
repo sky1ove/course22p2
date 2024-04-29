@@ -63,7 +63,25 @@ class MetricsCB(Callback):
     def before_epoch(self, learn): [o.reset() for o in self.all_metrics.values()]
 
     def after_epoch(self, learn):
-        log = {k:f'{v.compute():.3f}' for k,v in self.all_metrics.items()}
+        # original
+        # log = {k:f'{v.compute():.3f}' for k,v in self.all_metrics.items()}
+        
+        # Modify to handle multiple elements
+        log = {}
+        for k, v in self.all_metrics.items():
+            computed = v.compute()
+            if isinstance(computed, torch.Tensor) and computed.numel() >1 : 
+                # If compute() returns a tensor with multiple elements, handle each element separately.
+                for i, metric_value in enumerate(computed):
+                    log[f"{k}_{i+1}"] = f"{metric_value.item():.3f}"
+            else:
+                # Handle scalar values normally.
+                log[k] = f"{computed:.3f}"
+        
+        log['epoch'] = learn.epoch
+        log['train'] = 'train' if learn.model.training else 'eval'
+        self._log(log)
+        
         log['epoch'] = learn.epoch
         log['train'] = 'train' if learn.model.training else 'eval'
         self._log(log)
