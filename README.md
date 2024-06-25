@@ -9,8 +9,6 @@ During the course we build a deep learning framework called "miniai" from scratc
 
 ## Install
 
-Clone this repo, run:
-
 ``` sh
 !pip install git+https://github.com/sky1ove/course22p2.git
 ```
