@@ -70,17 +70,13 @@ class MetricsCB(Callback):
         log = {}
         for k, v in self.all_metrics.items():
             computed = v.compute()
-            if isinstance(computed, torch.Tensor) and computed.numel() >1 : 
+            if computed.numel() >1 : 
                 # If compute() returns a tensor with multiple elements, handle each element separately.
-                for i, metric_value in enumerate(computed):
-                    log[f"{k}_{i+1}"] = f"{metric_value.item():.3f}"
+                for i, item_computed in enumerate(computed):
+                    log[f"{k}_{i+1}"] = f"{item_computed:.3f}"
             else:
                 # Handle scalar values normally.
                 log[k] = f"{computed:.3f}"
-        
-        log['epoch'] = learn.epoch
-        log['train'] = 'train' if learn.model.training else 'eval'
-        self._log(log)
         
         log['epoch'] = learn.epoch
         log['train'] = 'train' if learn.model.training else 'eval'
@@ -89,7 +85,7 @@ class MetricsCB(Callback):
     def after_batch(self, learn):
         x,y,*_ = to_cpu(learn.batch)
         for m in self.metrics.values(): m.update(to_cpu(learn.preds), y)
-        self.loss.update(to_cpu(learn.loss), weight=len(x))
+        self.loss.update(to_cpu(learn.loss), weight=len(y))
 
 # %% ../nbs/09_learner.ipynb 36
 class DeviceCB(Callback):
