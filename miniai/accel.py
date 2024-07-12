@@ -50,15 +50,21 @@ from accelerate import Accelerator
 # %% ../nbs/17_DDPM_v2.ipynb 50
 class AccelerateCB(TrainCB):
     order = DeviceCB.order+10
-    def __init__(self, n_inp=1, mixed_precision="fp16"):
+    def __init__(self, n_inp=1, mixed_precision="fp16",fname='model'):
         super().__init__(n_inp=n_inp)
         self.acc = Accelerator(mixed_precision=mixed_precision)
+        self.fname=fname
         
     def before_fit(self, learn):
         learn.model,learn.opt,learn.dls.train,learn.dls.valid = self.acc.prepare(
             learn.model, learn.opt, learn.dls.train, learn.dls.valid)
 
     def backward(self, learn): self.acc.backward(learn.loss)
+    def after_fit(self,learn):
+        self.acc.wait_for_everyone()
+        if self.acc.is_main_process:
+            unwrapped_model = self.acc.unwrap_model(learn.model)
+            self.acc.save_model(unwrapped_model, self.fname)
 
 # %% ../nbs/17_DDPM_v2.ipynb 58
 from lightning.fabric import Fabric
